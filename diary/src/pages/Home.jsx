@@ -12,7 +12,7 @@ const Home = () => {
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
-    setPageTitle("정민이의 감정 일기장")
+    setPageTitle("감정 일기장")
     if(data.length >= 1) {
       const {beginTimeStamp, endTimeStamp} = getMonthRangeByDate(pivotDate);
       setFilteredData(

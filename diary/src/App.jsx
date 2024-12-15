@@ -7,6 +7,10 @@ import ChatWindow from "../chatting/ChatWindow.jsx";
 import { Link, Route, Routes } from "react-router-dom";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import EmotionStats from "./user/EmotionStats.jsx";
+import SignUp from "./user/SignUpPage.jsx";
+import Logout from "./user/LogoutPage.jsx";
+import AuthCallback from "./user/AuthCallback.jsx";
+import Login from "./user/LoginPage.jsx";
 
 export const DiaryStateContext = React.createContext();
 export const DiaryDispatchContext = React.createContext();
@@ -110,6 +114,11 @@ function App() {
                     <Route path="/diary/:id" element={<Diary/>}/>
                     <Route path="/edit/:id" element={<Edit/>}/>
                     <Route path="/stats" element={<EmotionStats/>}/>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
+                    <Route path="/logout" element={<Logout />} />
+                    <Route path="/signup" element={<SignUp />} />
+
                   </Routes>
                 </div>
                 {/* 오른쪽 섹션 */}

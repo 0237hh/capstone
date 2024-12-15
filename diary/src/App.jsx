@@ -1,10 +1,12 @@
-import './App.css'
+import './App.css';
 import Home from "./pages/Home.jsx";
 import New from "./pages/New.jsx";
 import Diary from "./pages/Diary.jsx";
 import Edit from "./pages/Edit.jsx";
-import {Link, Route, Routes} from "react-router-dom";
-import React, {useEffect, useReducer, useRef, useState} from "react";
+import ChatWindow from "../chatting/ChatWindow.jsx";
+import { Link, Route, Routes } from "react-router-dom";
+import React, { useEffect, useReducer, useRef, useState } from "react";
+import EmotionStats from "./user/EmotionStats.jsx";
 
 export const DiaryStateContext = React.createContext();
 export const DiaryDispatchContext = React.createContext();
@@ -35,28 +37,6 @@ function reducer(state, action) {
   }
 }
 
-const mockData = [
-  {
-    id: "mock1",
-    date: new Date().getTime() - 1,
-    content: "mock1",
-    emotionId: 1,
-  },
-  {
-    id: "mock2",
-    date: new Date().getTime() - 2,
-    content: "mock2",
-    emotionId: 2,
-  },
-  {
-    id: "mock3",
-    date: new Date().getTime() - 3,
-    content: "mock3",
-    emotionId: 3,
-  },
-
-]
-
 function App() {
   const [data, dispatch] = useReducer(reducer, []);
   const idRef = useRef(0);
@@ -64,18 +44,18 @@ function App() {
 
   useEffect(() => {
     const rawData = localStorage.getItem("diary");
-    if(!rawData) {
+    if (!rawData) {
       setIsDataLoaded(true);
       return;
     }
     const localData = JSON.parse(rawData);
-    if(localData.length === 0) {
+    if (localData.length === 0) {
       setIsDataLoaded(true);
       return;
     }
-    localData.sort((a,b) => Number(b.id) - Number(a.id));
+    localData.sort((a, b) => Number(b.id) - Number(a.id));
     idRef.current = localData[0].id + 1;
-    dispatch({type: "INIT", data: localData});
+    dispatch({ type: "INIT", data: localData });
     setIsDataLoaded(true);
   }, []);
 
@@ -96,43 +76,52 @@ function App() {
     dispatch({
       type: "UPDATE",
       data: {
-        id:targetId,
-        date:new Date(date).getTime(),
+        id: targetId,
+        date: new Date(date).getTime(),
         content,
         emotionId,
-      }
-    })
-  }
+      },
+    });
+  };
 
   const onDelete = (targetId) => {
     dispatch({
       type: "DELETE",
       targetId,
-    })
-  }
+    });
+  };
 
-  if(!isDataLoaded) {
-    return <div>데이터를 불러오는 중입니다</div>
+  if (!isDataLoaded) {
+    return <div>대화 목록을 불러오는 중입니다</div>;
   } else {
     return (
-      <DiaryStateContext.Provider value={data}>
-        <DiaryDispatchContext.Provider
-          value={{
-            onCreate, onUpdate, onDelete
-          }}
-        >
-          <div className="App">
-            <Routes>
-              <Route path="/" element={<Home/>}/>
-              <Route path="/new" element={<New/>}/>
-              <Route path="/diary/:id" element={<Diary/>}/>
-              <Route path="/edit/:id" element={<Edit/>}/>
-            </Routes>
-          </div>
-        </DiaryDispatchContext.Provider>
-      </DiaryStateContext.Provider>
+        <DiaryStateContext.Provider value={data}>
+          <DiaryDispatchContext.Provider value={{ onCreate, onUpdate, onDelete }}>
+            <div className="App">
+              <div className="main-layout">
+              <div className="emotionStatus">
+                <EmotionStats/>
+              </div>
+                {/* 메인 콘텐츠 영역 */}
+                <div className="content">
+                  <Routes>
+                    <Route path="/" element={<Home/>}/>
+                    <Route path="/new" element={<New/>}/>
+                    <Route path="/diary/:id" element={<Diary/>}/>
+                    <Route path="/edit/:id" element={<Edit/>}/>
+                    <Route path="/stats" element={<EmotionStats/>}/>
+                  </Routes>
+                </div>
+                {/* 오른쪽 섹션 */}
+                <div className="sidebar">
+                  <ChatWindow/>
+                </div>
+              </div>
+            </div>
+          </DiaryDispatchContext.Provider>
+        </DiaryStateContext.Provider>
     );
   }
 }
 
-export default App
+export default App;
